@@ -11,7 +11,7 @@ import java.util.*;
 public class Snake extends TimerTask implements KeyListener {
 
     int height = 500; int width = 500;   //pixels
-    int squareSize = 30;
+    int squareSize = 25;
     
     int speed = 350;   // 300 = update every 300 ms.  Larger number = slower game
 
@@ -25,7 +25,7 @@ public class Snake extends TimerTask implements KeyListener {
 
     int gameOver = 0;   // 0 = game playing, greater than 0 = game over. Set by run() to indicate state of game and read by paintComponent() to figure out what to draw - game, or the game over scree, or game won screen?
 
-    int clockTicksToRestart = 10;    //How many ticks after game over before restart?
+    int clockTicksToRestart = 6;    //How many ticks after game over before restart?
     int youWin = 10;    // Wait a little longer if user wins the game, to allow time to display 'you win' message
 
     LinkedList<int[]> snake = new LinkedList<int[]>();
@@ -117,6 +117,29 @@ public class Snake extends TimerTask implements KeyListener {
 
             int[] newHead = {headX + nextMove[0], headY + nextMove[1]};   //create new head
 
+            headX = newHead[0];    //Convenience variables for new head x and y
+            headY = newHead[1];
+
+            /////Edits to handle game borders
+            if (headX >= xSquares){
+                newHead[0]=0;
+                headX=0;
+            }
+            if (headX < 0){
+                newHead[0]=xSquares-1;
+                headX=xSquares-1;
+            }
+            if (headY < 0){
+                newHead[1]=ySquares-1;
+                headY=ySquares-1;
+            }
+            if (headY >= ySquares){
+                newHead[1]=0;
+                headY=0;
+            }
+
+            ///// end edits
+
             if (contains(newHead, snake)) {   //Is new head in snake? Snake ran into it's own body, game over.
                 gameOver = clockTicksToRestart;                 // A positive value means the game is considered over. If this is positive, run() decreases it by 1 every time to provide a 'countdown' to the next game.
             }
@@ -134,35 +157,14 @@ public class Snake extends TimerTask implements KeyListener {
             }
             ateKibble = false;   //reset.
 
-            headX = newHead[0];    //Convenience variables for new head x and y
-            headY = newHead[1];
+
 
             /*if ((headX < 0 || headX > xSquares) || (headY < 0 || headY > ySquares)) {   //Head outside board? Snake hit wall, game over
                 ////edit here to handle borders
                 gameOver = clockTicksToRestart;
                 return;
             }*/
-            /////Edits to handle game borders
-            if (headX > xSquares){
-                newHead[0]=0;
-                headX=0;
-            }
-            if (headX < 0){
-                newHead[0]=xSquares;
-                headX=xSquares;
-            }
-            if (headY < 0){
-                newHead[1]=ySquares;
-                headY=ySquares;
-            }
-            if (headY > ySquares){
-                newHead[1]=0;
-                headY=0;
-            }
 
-
-
-            ///// end edits
 
             if (headX == kibble[0] && headY == kibble[1]) {      //Is kibble in same square as snake head? Snake ate kibble.
                 score++;                              // increase score
