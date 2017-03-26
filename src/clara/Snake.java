@@ -10,10 +10,10 @@ import java.util.*;
 
 public class Snake extends TimerTask implements KeyListener {
 
-    int height = 300; int width = 400;   //pixels
-    int squareSize = 50;
+    int height = 500; int width = 500;   //pixels
+    int squareSize = 30;
     
-    int speed = 300;   // 300 = update every 300 ms.  Larger number = slower game
+    int speed = 350;   // 300 = update every 300 ms.  Larger number = slower game
 
     int xSquares = width/squareSize;
     int ySquares = height/squareSize;
@@ -25,7 +25,7 @@ public class Snake extends TimerTask implements KeyListener {
 
     int gameOver = 0;   // 0 = game playing, greater than 0 = game over. Set by run() to indicate state of game and read by paintComponent() to figure out what to draw - game, or the game over scree, or game won screen?
 
-    int clockTicksToRestart = 6;    //How many ticks after game over before restart?
+    int clockTicksToRestart = 10;    //How many ticks after game over before restart?
     int youWin = 10;    // Wait a little longer if user wins the game, to allow time to display 'you win' message
 
     LinkedList<int[]> snake = new LinkedList<int[]>();
@@ -69,7 +69,7 @@ public class Snake extends TimerTask implements KeyListener {
             super.paintComponent(g);
 
             g.clearRect(0, 0, width, height);    //Clear panel, fill with black
-            g.setColor(Color.BLACK);
+            g.setColor(Color.GRAY);
             g.fillRect(0, 0, width, height);
 
             if (gameOver > 6) {                 // If gameOver indicates game is won, display message
@@ -79,7 +79,7 @@ public class Snake extends TimerTask implements KeyListener {
             }
 
             else if (gameOver > 0 ) {          // If gameOver indicates game is over (won, lost, whatever) display score and countdown to next game
-                g.setColor(Color.GREEN);
+                g.setColor(Color.RED);
                 g.drawString(">-o~~~~~~~~~~~~~  SNAKE  ~~~~~~~~~~~~~o-<", 50, 50);
 
                 g.drawString("GAME OVER score: " + score, 120, 100);
@@ -88,10 +88,10 @@ public class Snake extends TimerTask implements KeyListener {
             }
 
             else {                             // Game is not over. Draw snake and kibble, wherever they are.
-                g.setColor(Color.BLUE);
+                g.setColor(Color.MAGENTA);
                 g.fillRect(kibble[0] * squareSize, kibble[1] * squareSize, squareSize, squareSize);
 
-                g.setColor(Color.RED);
+                g.setColor(Color.GREEN);
                 for (int[] square : snake) {
                     g.fillRect(square[0] * squareSize, square[1] * squareSize, squareSize, squareSize);
                 }
@@ -137,10 +137,32 @@ public class Snake extends TimerTask implements KeyListener {
             headX = newHead[0];    //Convenience variables for new head x and y
             headY = newHead[1];
 
-            if ((headX < 0 || headX > xSquares) || (headY < 0 || headY > ySquares)) {   //Head outside board? Snake hit wall, game over
+            /*if ((headX < 0 || headX > xSquares) || (headY < 0 || headY > ySquares)) {   //Head outside board? Snake hit wall, game over
+                ////edit here to handle borders
                 gameOver = clockTicksToRestart;
                 return;
+            }*/
+            /////Edits to handle game borders
+            if (headX > xSquares){
+                newHead[0]=0;
+                headX=0;
             }
+            if (headX < 0){
+                newHead[0]=xSquares;
+                headX=xSquares;
+            }
+            if (headY < 0){
+                newHead[1]=ySquares;
+                headY=ySquares;
+            }
+            if (headY > ySquares){
+                newHead[1]=0;
+                headY=0;
+            }
+
+
+
+            ///// end edits
 
             if (headX == kibble[0] && headY == kibble[1]) {      //Is kibble in same square as snake head? Snake ate kibble.
                 score++;                              // increase score
